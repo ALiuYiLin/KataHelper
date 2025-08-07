@@ -1,9 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-
+import { AxiosRequestConfig } from 'axios'
 // Custom APIs for renderer
 const api = {
-  gameInfo: () => ipcRenderer.invoke('getGameInfo')
+  gameInfo: () => ipcRenderer.invoke('getGameInfo'),
+  request: (config: AxiosRequestConfig) => ipcRenderer.invoke('request', config)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

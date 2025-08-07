@@ -3,6 +3,8 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { exec } from 'child_process'
+import axios, { AxiosRequestConfig } from 'axios'
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 function createWindow(): void {
   // Create the browser window.
@@ -53,6 +55,18 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
   ipcMain.handle('getGameInfo', getGameInfo)
+  ipcMain.handle('request', (_event, config: AxiosRequestConfig) => {
+    return new Promise((resolve, reject) => {
+      axios
+        .request(config)
+        .then((res) => {
+          resolve(res.data)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
+  })
 
   createWindow()
 

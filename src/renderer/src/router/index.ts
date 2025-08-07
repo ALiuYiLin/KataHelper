@@ -41,7 +41,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (configStore.appPort === null && to.path !== '/connect') {
+  if (configStore.appPort.value === null && to.path !== '/connect') {
     next({
       path: '/connect'
     })
