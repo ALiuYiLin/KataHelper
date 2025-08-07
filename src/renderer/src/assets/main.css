@@ -4,5 +4,9 @@ body {
   display: flex;
   overflow: hidden;
   background-color: #eef4f9;
+  margin: 0;
+}
+#app{
+  flex: 1;
 }
 
