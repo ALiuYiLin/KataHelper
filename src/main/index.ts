@@ -55,6 +55,18 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
   ipcMain.handle('getGameInfo', getGameInfo)
+  // ipcMain.handle('request', (_event, config: AxiosRequestConfig) => {
+  //   return new Promise((resolve, reject) => {
+  //     axios
+  //       .request(config)
+  //       .then((res) => {
+  //         resolve(res.data)
+  //       })
+  //       .catch((error) => {
+  //         reject(error)
+  //       })
+  //   })
+  // })
   ipcMain.handle('request', (_event, config: AxiosRequestConfig) => {
     return new Promise((resolve, reject) => {
       axios

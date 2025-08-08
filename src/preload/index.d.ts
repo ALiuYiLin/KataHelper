@@ -5,8 +5,8 @@ declare global {
   interface Window {
     electron: ElectronAPI
     api: {
-      gameInfo: () => Promise<{ [key: string]: string }>,
-      request: (config: AxiosRequestConfig) => Promise<unknown>
+      gameInfo: () => Promise<{ [key: string]: string }>
+      request: (config: AxiosRequestConfig) => Promise<any>
     }
   }
 }

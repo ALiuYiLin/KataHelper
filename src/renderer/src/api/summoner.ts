@@ -1,19 +1,11 @@
-import { useConfigStore } from '@renderer/store/config'
-import axios from 'axios'
+import { request } from '@renderer/utils'
 
-export function getCurrentSummoner(): void {
-  const configStore = useConfigStore()
-  axios
-    .get(`https://127.0.0.1:${configStore.appPort}/lol-summoner/v1/current-summoner`, {
-      auth: {
-        username: 'riot',
-        password: configStore.remotingAuthToken.value as string
-      }
-    })
-    .then((res) => {
-      console.log('res: ', res)
-    })
-    .catch((e) => {
-      console.log('e: ', e)
-    })
+/**
+ * 当前用户信息
+ */
+export const getCurrentSummoner = async <T>(): Promise<T> => {
+  return request({
+    url: '/lol-summoner/v1/current-summoner',
+    method: 'get'
+  })
 }
