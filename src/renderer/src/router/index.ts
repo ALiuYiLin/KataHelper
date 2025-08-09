@@ -1,5 +1,5 @@
 import { useConfigStore } from '@renderer/store/config'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouteLocationRaw } from 'vue-router'
 const configStore = useConfigStore()
 
 const routes = [
@@ -49,5 +49,9 @@ router.beforeEach((to, from, next) => {
   }
   next()
 })
+
+export const routerPush = (to: RouteLocationRaw): void => {
+  router.push(to)
+}
 
 export default router

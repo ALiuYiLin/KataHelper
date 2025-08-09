@@ -1,3 +1,5 @@
+
+
 # 英雄联盟LCU API
 
 ## 当前召唤师信息
@@ -216,5 +218,213 @@
 
 请求'https://ddragon.leagueoflegends.com/cdn/{versionId}/img/champion/{championName}.png'
 
+## 匹配模式
 
+https://static.developer.riotgames.com/docs/lol/queues.json
+
+```json
+[
+    {
+        "queueId": 0,                   // 队列ID：0（自定义模式）
+        "map": "Custom games",          // 地图：自定义游戏
+        "description": null,            // 描述：无
+        "notes": null                   // 备注：无
+    },
+    {
+        "queueId": 2,                   // 队列ID：2（已废弃）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "5v5 Blind Pick games",  // 描述：5v5盲选模式
+        "notes": "Deprecated in patch 7.19 in favor of queueId 430"  // 备注：7.19版本废弃，由430队列替代
+    },
+    {
+        "queueId": 4,                   // 队列ID：4（已废弃）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "5v5 Ranked Solo games",  // 描述：5v5单排排位赛
+        "notes": "Deprecated in favor of queueId 420"  // 备注：已废弃，由420队列替代
+    },
+    // ...（中间队列省略）...
+    {
+        "queueId": 420,                 // 队列ID：420（当前活跃）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "5v5 Ranked Solo games",  // 描述：单双排（仅单人排位）
+        "notes": null                   // 备注：无（当前主要排位队列）
+    },
+    {
+        "queueId": 430,                 // 队列ID：430（当前活跃）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "5v5 Blind Pick games",  // 描述：匹配模式（盲选）
+        "notes": null                   // 备注：无
+    },
+    {
+        "queueId": 440,                 // 队列ID：440（当前活跃）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "5v5 Ranked Flex games",  // 描述：灵活排位（可组队）
+        "notes": null                   // 备注：无
+    },
+    {
+        "queueId": 450,                 // 队列ID：450（当前活跃）
+        "map": "Howling Abyss",         // 地图：嚎哭深渊
+        "description": "5v5 ARAM games", // 描述：极地大乱斗
+        "notes": null                   // 备注：无
+    },
+    // ...（中间队列省略）...
+    {
+        "queueId": 900,                 // 队列ID：900（限时模式）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "ARURF games",   // 描述：无限乱斗（随机英雄）
+        "notes": null                   // 备注：轮换开放模式
+    },
+    {
+        "queueId": 1400,                // 队列ID：1400（限时模式）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "Ultimate Spellbook games",  // 描述：终极魔典
+        "notes": null                   // 备注：可选用其他英雄终极技能
+    },
+    {
+        "queueId": 1700,                // 队列ID：1700（新模式）
+        "map": "Rings of Wrath",        // 地图：斗魂竞技场
+        "description": "Arena",         // 描述：2v2v2v2竞技场模式
+        "notes": null                   // 备注：2023年新模式
+    },
+    {
+        "queueId": 1900,                // 队列ID：1900（限时模式）
+        "map": "Summoner's Rift",       // 地图：召唤师峡谷
+        "description": "Pick URF games",  // 描述：自选无限火力
+        "notes": null                   // 备注：可选英雄的URF变体
+    }
+]
+```
+
+## game.statsm字段解析
+
+```json
+
+//game.statsm字段解析
+{
+  // KDA数据 //
+  "assists": 2,                  // 助攻次数
+  "deaths": 6,                   // 死亡次数
+  "kills": 6,                    // 击杀次数
+
+  // 连杀数据 //
+  "doubleKills": 1,              // 双杀次数
+  "killingSprees": 0,            // 连续击杀事件次数（一次连续击杀=至少3杀且不死）
+  "largestKillingSpree": 3,      // 最大连杀数（单次连续击杀最大次数）
+  "largestMultiKill": 2,         // 单次事件最高击杀数（本次为双杀）
+  "longestTimeSpentLiving": 237, // 最长存活时间（秒）
+  "pentaKills": 0,               // 五杀次数
+  "quadraKills": 0,              // 四杀次数
+  "tripleKills": 0,              // 三杀次数
+  "unrealKills": 0,              // 传奇连杀（非常罕见的连续击杀，如超五杀）
+
+  // 经济数据 //
+  "goldEarned": 10010,           // 获得的总金币
+  "goldSpent": 10000,            // 花费的金币
+
+  // 装备数据 (新版API使用长ID格式) //
+  "item0": 223068,               // 主装备槽1
+  "item1": 222051,               // 主装备槽2
+  "item2": 443063,               // 主装备槽3
+  "item3": 223084,               // 主装备槽4
+  "item4": 226665,               // 主装备槽5
+  "item5": 223111,               // 主装备槽6
+  "item6": 3348,                 // 饰品/守卫装备槽（3348=扫描透镜）
+
+  // 英雄基础数据 //
+  "champLevel": 17,              // 游戏结束时英雄等级
+  "combatPlayerScore": 0,        // 战斗评分（旧版，通常为0）
+
+  // 伤害数据 //
+  "damageDealtToObjectives": 0,  // 对史诗野怪/防御塔造成的伤害
+  "damageDealtToTurrets": 0,     // 对防御塔造成的伤害
+  "damageSelfMitigated": 135936, // 通过护盾/减伤等减免的伤害
+  "magicDamageDealt": 34539,     // 魔法伤害总量（包含对小兵等）
+  "magicDamageDealtToChampions": 21463,  // 对英雄造成的魔法伤害
+  "physicalDamageDealt": 33182,           // 物理伤害总量
+  "physicalDamageDealtToChampions": 15146,// 对英雄造成的物理伤害
+  "trueDamageDealt": 0,                   // 真实伤害总量
+  "trueDamageDealtToChampions": 0,         // 对英雄造成的真实伤害
+  "totalDamageDealt": 67721,               // 总伤害输出
+  "totalDamageDealtToChampions": 36609,    // 对英雄总伤害
+  "largestCriticalStrike": 0,              // 最大暴击伤害值
+
+  // 承受伤害 //
+  "magicalDamageTaken": 26674,   // 承受的魔法伤害
+  "physicalDamageTaken": 26199,  // 承受的物理伤害
+  "trueDamageTaken": 16374,      // 承受的真实伤害
+  "totalDamageTaken": 69247,     // 承受的总伤害
+
+  // 治疗数据 //
+  "totalHeal": 27807,            // 总治疗量（包括生命偷取等）
+  "totalUnitsHealed": 1,         // 治疗的目标数量（通常只算自身）
+
+  // 小兵与野怪数据 //
+  "neutralMinionsKilled": 0,      // 总野怪击杀数
+  "neutralMinionsKilledEnemyJungle": 0,  // 敌方野区野怪击杀
+  "neutralMinionsKilledTeamJungle": 0,   // 己方野区野怪击杀
+  "totalMinionsKilled": 0,        // 总小兵击杀数（补刀）
+
+  // 推塔数据 //
+  "inhibitorKills": 0,            // 击毁的基地水晶数
+  "turretKills": 0,               // 击毁的防御塔数
+  "firstTowerAssist": false,      // 是否参与首个防御塔击毁
+  "firstTowerKill": false,        // 是否亲自击毁首个防御塔
+
+  // 视野数据（新版可能有变化）//
+  "visionScore": 0,               // 视野得分（新版可能未使用此字段）
+  "wardsKilled": 0,               // 击毁的敌方守卫数
+  "wardsPlaced": 0,               // 放置的守卫数
+  "sightWardsBoughtInGame": 0,     // 购买的黄色饰品守卫数
+  "visionWardsBoughtInGame": 0,    // 购买的红色饰品守卫数
+
+  // 控制效果数据 //
+  "timeCCingOthers": 26,           // 控制敌人总时长（秒）
+  "totalTimeCrowdControlDealt": 158, // 造成的群体控制总时长
+
+  // 符文系统（此数据中为空）//
+  "perk0": 0, "perk0Var1": 0, "perk0Var2": 0, "perk0Var3": 0,  // 主符文
+  "perk1": 0, "perk1Var1": 0, "perk1Var2": 0, "perk1Var3": 0,  // 主符文
+  "perk2": 0, "perk2Var1": 0, "perk2Var2": 0, "perk2Var3": 0,  // 主符文
+  "perk3": 0, "perk3Var1": 0, "perk3Var2": 0, "perk3Var3": 0,  // 副符文
+  "perk4": 0, "perk4Var1": 0, "perk4Var2": 0, "perk4Var3": 0,  // 副符文
+  "perk5": 0, "perk5Var1": 0, "perk5Var2": 0, "perk5Var3": 0,  // 副符文
+  "perkPrimaryStyle": 0,     // 主符文页ID（0表示未使用）
+  "perkSubStyle": 0,         // 副符文页ID
+
+  // 特殊模式数据（如云顶之弈/无限火力等）//
+  "playerAugment1": 11,       // 海克斯/强化符文1
+  "playerAugment2": 152,      // 海克斯/强化符文2
+  "playerAugment3": 181,      // 海克斯/强化符文3
+  "playerAugment4": 251,      // 特殊模式第4个强化符文
+  "playerAugment5": 0,        // 特殊模式第5个强化符文
+  "playerAugment6": 0,        // 特殊模式第6个强化符文
+
+  // 早期投降相关 //
+  "causedEarlySurrender": false,         // 是否发起提前投降
+  "earlySurrenderAccomplice": false,     // 是否同意提前投降
+  "gameEndedInEarlySurrender": false,    // 游戏是否提前投降结束
+  "gameEndedInSurrender": false,         // 游戏是否投降结束
+  "teamEarlySurrendered": false,          // 本队是否提前投降
+
+  // 特殊事件标志 //
+  "firstBloodAssist": false,      // 是否助攻首杀
+  "firstBloodKill": false,        // 是否获得首杀
+  "firstInhibitorAssist": false,  // 是否助攻首个水晶
+  "firstInhibitorKill": false,    // 是否击毁首个水晶
+
+  // 玩家与队伍信息 //
+  "participantId": 12,           // 玩家在比赛中的编号（1-10）
+  "playerSubteamId": 7,          // 子队伍ID（特殊模式如2v2v2v2）
+  "subteamPlacement": 4,         // 子队伍排名（第4名）
+  "win": true,                   // 是否获胜
+
+  // 废弃字段（通常为0）//
+  "objectivePlayerScore": 0, 
+  "playerScore0": 0, "playerScore1": 0, "playerScore2": 0, "playerScore3": 0,
+  "playerScore4": 0, "playerScore5": 0, "playerScore6": 0, "playerScore7": 0,
+  "playerScore8": 0, "playerScore9": 0, 
+  "totalPlayerScore": 0, 
+  "totalScoreRank": 0
+}
+```
 

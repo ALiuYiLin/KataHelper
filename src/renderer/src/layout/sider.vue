@@ -1,17 +1,15 @@
 <script lang="ts" setup>
-async function getGameInfo(): Promise<void> {
-  const gameInfo = await window.api.gameInfo()
-  console.log('gameInfo: ', gameInfo)
-}
+import { routerPush } from '@renderer/router';
+
 </script>
 <template>
   <div class="sider">
-    <button @click="getGameInfo">获取游戏数据</button>
     <ul>
-      <li>战绩查询</li>
-      <li>对局助手</li>
-      <li>辅助功能</li>
-      <li>英雄排行</li>
+      <li @click="routerPush({ path: '/record' })">战绩查询</li>
+      <li @click="routerPush({ path: '/game' })">对局助手</li>
+      <li @click="routerPush({ path: '/secondary' })">辅助功能</li>
+      <li @click="routerPush({ path: '/rank' })">英雄排行</li>
+      <li @click="routerPush({ path: '/connect' })">手动连接</li>
     </ul>
   </div>
 </template>

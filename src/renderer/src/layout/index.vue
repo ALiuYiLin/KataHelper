@@ -19,5 +19,7 @@ import sider from './sider.vue'
 }
 .main {
   flex: 1;
+  overflow: auto;
+  height: 100vh;
 }
 </style>
