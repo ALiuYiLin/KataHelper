@@ -1,36 +1,85 @@
 <template>
   <div class="career">
     <ul>
-      <li v-for="game in games" :key="game['gameId']">
-        <img :src="getUrl(game['participants'][0]['championId'])" />
+      <li
+        v-for="game in recentMatchs?.games.games"
+        :key="game['gameId']"
+        @click="changeCurrentGame(game.gameId)">
+        <img :src="getChampionIconUrl(game['participants'][0]['championId'])" />
         <div class="game-info">
           <div class="gameType">{{ getQueue(game['queueId'])?.tag }}</div>
-          <div>{{ game['participants'][0]['stats']['kills'] }}/{{ game['participants'][0]['stats']['deaths'] }}/{{ game['participants'][0]['stats']['assists'] }}</div>
+          <div>{{ getKdaByIndex(game, 0) }}</div>
         </div>
       </li>
     </ul>
+    <div class="game-details">
+      <div class="game-info"></div>
+      <div class="game">
+        <div v-if="currentTeamDatas">
+          <div v-for="(teamData, i) in currentTeamDatas" :key="'team' + i">
+            <div v-for="j in teamData.participants.length" :key="'player' + j">
+              <img :src="getChampionIconUrl(teamData.participants[j - 1].championId)" />
+              <span>{{ teamData.participantIdentities[j - 1].player.gameName }}</span>
+              <span>{{ teamData.participantIdentities[j - 1].player.gameName }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { getCurrentSummonerMatches } from '@renderer/api/match-history'
+import {
+  getCurrentSummonerMatches,
+  getGameDetails,
+  getKdaByIndex
+} from '@renderer/api/match-history'
 import { getQueue } from '@renderer/constant/queues'
-import { useConfigStore } from '@renderer/store/config'
+import { Game, Matches, TeamData } from '@renderer/types'
 import { getChampionIconUrl } from '@renderer/utils'
 import { onMounted, ref } from 'vue'
-const configStore = useConfigStore()
-const games = ref<any[]>([])
-function getUrl(id: number): string {
-  const urlE = getChampionIconUrl(id)
-  return urlE
-}
-console.log('configStore: ', configStore.appPort.value)
+const recentMatchs = ref<Matches>()
+const currentTeamDatas = ref<TeamData[]>()
+
 onMounted(async () => {
-  getCurrentSummonerMatches<any>().then((res) => {
-    games.value = res['games']['games']
-    console.log('games.value: ', games.value)
-  })
+  recentMatchs.value = await getCurrentSummonerMatches<Matches>()
+  console.log('recentMatchs.value: ', recentMatchs.value)
+  changeCurrentGame(recentMatchs.value.games.games[0].gameId)
 })
+
+async function changeCurrentGame(gameId: number): Promise<void> {
+  const game = await getGameDetails<Game>(gameId)
+  const teamDatas: TeamData[] = []
+  // 是否存在 subteamPlacement不为0
+  if (game.participants.find((p) => p.stats.subteamPlacement !== 0)) {
+    //存在 按subteamPlacement字段划分
+    const teamCount = new Set(game.participants.map((p) => p.stats.subteamPlacement)).size
+    for (let i = 0; i < teamCount; i++) {
+      const participants = game.participants.filter((p) => p.stats.subteamPlacement === i + 1)
+      const teamData: TeamData = {
+        participants: participants,
+        participantIdentities: game.participantIdentities.filter((p) =>
+          participants.find((a) => a.participantId === p.participantId)
+        )
+      }
+      teamDatas.push(teamData)
+    }
+  } else {
+    // 不存在 按win字段划分
+    const playerCount = game.participants.length
+    teamDatas.push({
+      participants: game.participants.slice(0, playerCount / 2),
+      participantIdentities: game.participantIdentities.slice(0, playerCount / 2)
+    })
+    teamDatas.push({
+      participants: game.participants.slice(playerCount / 2, playerCount),
+      participantIdentities: game.participantIdentities.slice(playerCount / 2, playerCount)
+    })
+  }
+  currentTeamDatas.value = teamDatas
+  console.log('currentTeamDatas.value: ', currentTeamDatas.value)
+}
 </script>
 
 <style scoped>
@@ -46,7 +95,7 @@ li {
   height: 55px;
   padding: 10px;
 }
-.game-info{
+.game-info {
   display: flex;
   flex-direction: column;
   justify-content: center;

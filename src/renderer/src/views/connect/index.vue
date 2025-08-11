@@ -30,16 +30,13 @@ async function connect(): Promise<void> {
   const champions = await getChampionInfo<any>()
   console.log('champions: ', champions)
   championStore.champions = champions['data']
-  router.push({ path: '/' })
+  router.push({ path: '/record' })
 }
 async function currentSummoner(): Promise<void> {
   getCurrentSummoner<any>().then((res) => {
-    console.log('res: ', res['gameName'])
+    console.log('res: ', res)
   })
 }
 </script>
 <style scoped>
-h1:hover {
-  cursor: pointer;
-}
 </style>

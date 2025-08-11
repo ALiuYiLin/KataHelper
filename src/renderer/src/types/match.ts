@@ -215,7 +215,7 @@ export interface Game {
   teams: Team[]
 }
 
-export interface Game {
+export interface GamePage {
   gameBeginDate: string
   gameCount: number
   gameEndDate: string
@@ -226,6 +226,11 @@ export interface Game {
 
 export interface Matches {
   accountId: number
-  games: Game
+  games: GamePage
   platformId: string
+}
+
+export interface TeamData {
+  participants: Participant[]
+  participantIdentities: ParticipantIdentity[]
 }
