@@ -4,6 +4,9 @@ import { routerPush } from '@renderer/router';
 </script>
 <template>
   <div class="sider">
+    <div>
+      <img src="" >
+    </div>
     <ul>
       <li @click="routerPush({ path: '/record' })">战绩查询</li>
       <li @click="routerPush({ path: '/game' })">对局助手</li>
@@ -29,7 +32,6 @@ li {
 ul {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
 }
 li {
   display: block;
