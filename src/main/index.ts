@@ -13,6 +13,7 @@ function createWindow(): void {
     height: 770,
     show: false,
     autoHideMenuBar: true,
+    frame: false,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -119,6 +120,7 @@ async function getGameInfo(): Promise<{ [key: string]: string }> {
           dict[key] = value
         }
       }
+      console.log('dict: ', dict)
       resolve(dict)
     })
   })

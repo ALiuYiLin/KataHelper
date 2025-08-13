@@ -1,43 +1,13 @@
 <template>
   <div class="career">
-    <ul>
-      <li
-        v-for="game in recentMatchs?.games.games"
-        :key="game['gameId']"
-        @click="changeCurrentGame(game.gameId)">
-        <img :src="getChampionIconUrl(game['participants'][0]['championId'])" />
-        <div class="game-info">
-          <div class="gameType">{{ getQueue(game['queueId'])?.tag }}</div>
-          <div>{{ getKdaByIndex(game, 0) }}</div>
-        </div>
-      </li>
-    </ul>
-    <div class="game-details">
-      <div class="game-info"></div>
-      <div class="game">
-        <div v-if="currentTeamDatas">
-          <div v-for="(teamData, i) in currentTeamDatas" :key="'team' + i">
-            <div v-for="j in teamData.participants.length" :key="'player' + j">
-              <img :src="getChampionIconUrl(teamData.participants[j - 1].championId)" />
-              <span>{{ teamData.participantIdentities[j - 1].player.gameName }}</span>
-              <span>{{ teamData.participantIdentities[j - 1].player.gameName }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <recent-matches :matches="recentMatchs"></recent-matches>
   </div>
 </template>
 
 <script lang="ts" setup>
-import {
-  getCurrentSummonerMatches,
-  getGameDetails,
-  getKdaByIndex
-} from '@renderer/api/match-history'
-import { getQueue } from '@renderer/constant/queues'
+import { getCurrentSummonerMatches, getGameDetails } from '@renderer/api/match-history'
 import { Game, Matches, TeamData } from '@renderer/types'
-import { getChampionIconUrl } from '@renderer/utils'
+import RecentMatches from './components/RecentMatches.vue'
 import { onMounted, ref } from 'vue'
 const recentMatchs = ref<Matches>()
 const currentTeamDatas = ref<TeamData[]>()
