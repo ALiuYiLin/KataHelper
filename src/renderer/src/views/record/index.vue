@@ -1,6 +1,9 @@
 <template>
   <div class="career">
     <recent-matches :matches="recentMatchs"></recent-matches>
+    <button>上一页</button>
+    <button>下一页</button>
+    <button>刷新</button>
   </div>
 </template>
 
@@ -11,9 +14,16 @@ import RecentMatches from './components/RecentMatches.vue'
 import { onMounted, ref } from 'vue'
 const recentMatchs = ref<Matches>()
 const currentTeamDatas = ref<TeamData[]>()
+const page = ref({
+  begIndex: 0,
+  endIndex: 7
+})
 
 onMounted(async () => {
-  recentMatchs.value = await getCurrentSummonerMatches<Matches>()
+  recentMatchs.value = await getCurrentSummonerMatches<Matches>({
+    begIndex: page.value.begIndex,
+    endIndex: page.value.endIndex
+  })
   console.log('recentMatchs.value: ', recentMatchs.value)
   changeCurrentGame(recentMatchs.value.games.games[0].gameId)
 })

@@ -1,5 +1,5 @@
 import { useGameStore } from '@renderer/store/game'
-import { SummonerSpell } from '@renderer/types'
+import { PRune, SummonerSpell } from '@renderer/types'
 import { requestDdragon } from '@renderer/utils'
 
 const gameStore = useGameStore()
@@ -30,6 +30,16 @@ export const getChampionInfo = async <T>(): Promise<T> => {
 export const getSummonerSpell = async (): Promise<SummonerSpell> => {
   return requestDdragon({
     url: `/cdn/${gameStore.version}/data/zh_CN/summoner.json`,
+    method: 'get'
+  })
+}
+
+/**
+ * 获取符文
+ */
+export const getPRunes = async (): Promise<PRune[]> => {
+  return requestDdragon({
+    url: `/cdn/15.16.1/data/zh_CN/runesReforged.json`,
     method: 'get'
   })
 }

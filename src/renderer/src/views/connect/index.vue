@@ -9,7 +9,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { getChampionInfo, getGameVersion, getSummonerSpell } from '@renderer/api/ddragon'
+import { getChampionInfo, getGameVersion, getPRunes, getSummonerSpell } from '@renderer/api/ddragon'
 import { useChampionStore } from '@renderer/store'
 import { useConfigStore } from '@renderer/store/config'
 import { useGameStore } from '@renderer/store/game'
@@ -34,6 +34,8 @@ async function connect(): Promise<void> {
   const gameVersion = await getGameVersion<any>()
   gameStore.version = gameVersion[0]
   gameStore.summoner = await getSummonerSpell()
+  gameStore.pRunes = await getPRunes()
+  console.log('gameStore.pRunes: ', gameStore.pRunes)
   console.log('gameStore.summoner: ', gameStore.summoner)
   console.log('gameStore.version: ', gameStore.version)
 
