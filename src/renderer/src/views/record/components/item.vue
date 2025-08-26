@@ -39,10 +39,12 @@ function getImgUrl(): string {
 </script>
 <style scoped>
 .item {
-  height: 23px;
-  width: 23px;
+  position: relative;
 }
 img {
+  position: absolute;
+  left: 0;
+  top: 0;
   height: 100%;
 }
 </style>

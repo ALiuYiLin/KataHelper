@@ -15,3 +15,9 @@ const props = defineProps({
 
 console.log('props: ', props)
 </script>
+
+<style scoped>
+.recent-matches {
+  flex: 1;
+}
+</style>

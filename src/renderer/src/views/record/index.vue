@@ -1,84 +1,95 @@
-<template>
-  <div class="career">
-    <recent-matches :matches="recentMatchs"></recent-matches>
-    <button>上一页</button>
-    <button>下一页</button>
-    <button>刷新</button>
-  </div>
-</template>
 
 <script lang="ts" setup>
-import { getCurrentSummonerMatches, getGameDetails } from '@renderer/api/match-history'
-import { Game, Matches, TeamData } from '@renderer/types'
+import { getCurrentSummonerMatches } from '@renderer/api/match-history'
+import { Matches } from '@renderer/types'
 import RecentMatches from './components/RecentMatches.vue'
 import { onMounted, ref } from 'vue'
+import RankStats from './components/RankStats.vue'
+import Page from './page.vue'
+import Overview from './overview.vue'
+import ChampionUsed from './ChampionUsed.vue'
+import Summoner from './summoner.vue'
+
 const recentMatchs = ref<Matches>()
-const currentTeamDatas = ref<TeamData[]>()
 const page = ref({
   begIndex: 0,
-  endIndex: 7
+  endIndex: 19
 })
 
 onMounted(async () => {
+  await getRecentMatches()
+})
+async function getRecentMatches(): Promise<void> {
+  console.log('page: ', page.value)
   recentMatchs.value = await getCurrentSummonerMatches<Matches>({
     begIndex: page.value.begIndex,
     endIndex: page.value.endIndex
   })
   console.log('recentMatchs.value: ', recentMatchs.value)
-  changeCurrentGame(recentMatchs.value.games.games[0].gameId)
-})
-
-async function changeCurrentGame(gameId: number): Promise<void> {
-  const game = await getGameDetails<Game>(gameId)
-  const teamDatas: TeamData[] = []
-  // 是否存在 subteamPlacement不为0
-  if (game.participants.find((p) => p.stats.subteamPlacement !== 0)) {
-    //存在 按subteamPlacement字段划分
-    const teamCount = new Set(game.participants.map((p) => p.stats.subteamPlacement)).size
-    for (let i = 0; i < teamCount; i++) {
-      const participants = game.participants.filter((p) => p.stats.subteamPlacement === i + 1)
-      const teamData: TeamData = {
-        participants: participants,
-        participantIdentities: game.participantIdentities.filter((p) =>
-          participants.find((a) => a.participantId === p.participantId)
-        )
-      }
-      teamDatas.push(teamData)
-    }
-  } else {
-    // 不存在 按win字段划分
-    const playerCount = game.participants.length
-    teamDatas.push({
-      participants: game.participants.slice(0, playerCount / 2),
-      participantIdentities: game.participantIdentities.slice(0, playerCount / 2)
-    })
-    teamDatas.push({
-      participants: game.participants.slice(playerCount / 2, playerCount),
-      participantIdentities: game.participantIdentities.slice(playerCount / 2, playerCount)
-    })
-  }
-  currentTeamDatas.value = teamDatas
-  console.log('currentTeamDatas.value: ', currentTeamDatas.value)
+  // changeCurrentGame(recentMatchs.value.games.games[0].gameId)
 }
 </script>
 
-<style scoped>
-ul,
-li {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+<template>
+  <div class="record">
+    <div>
+      <summoner></summoner>
+      <div>
+        <rank-stats></rank-stats>
+        <rank-stats></rank-stats>
+      </div>
+    </div>
+    <div>
+      <div class="record-left">
+        <Page></Page>
+        <overview></overview>
+        <champion-used></champion-used>
+      </div>
+      <recent-matches :matches="recentMatchs"></recent-matches>
+    </div>
+  </div>
+</template>
+
+<style lang="scss">
+.record {
+  .rank-stats + .rank-stats {
+    margin-left: 10px;
+  }
 }
-li {
-  display: flex;
-  flex-direction: row;
-  height: 55px;
-  padding: 10px;
-}
-.game-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-size: 12px;
+</style>
+<style lang="scss" scoped>
+.record {
+  background-color: rgba(#1a1a1d, 1);
+  padding-top: 30px;
+  & > div:nth-child(1) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0px 50px 10px 10px;
+
+    & img {
+      width: 50px;
+      height: 50px;
+    }
+    & > div:nth-child(1) {
+      padding: 30px 20px;
+    }
+    & > div:nth-child(2) {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
+  & > div:nth-child(2) {
+    display: flex;
+    flex-direction: row;
+
+    .record-left {
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
 }
 </style>

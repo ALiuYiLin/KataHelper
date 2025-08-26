@@ -1,4 +1,4 @@
-import { Game } from '@renderer/types'
+import { Game, TeamData } from '@renderer/types'
 import { request } from '@renderer/utils'
 
 /**
@@ -63,4 +63,37 @@ export const getNameWithTagLineByGame = (game: any, index: number): string => {
   return (
     getGameNameByGame(game, index) + '#' + game['participantIdentities'][index]['player']['tagLine']
   )
+}
+
+// 获取当前游戏队伍数据
+export const getCurrentGameTeamDatas = async (gameId: number): Promise<TeamData[]> => {
+  const game = await getGameDetails<Game>(gameId)
+  const teamDatas: TeamData[] = []
+  // 是否存在 subteamPlacement不为0
+  if (game.participants.find((p) => p.stats.subteamPlacement !== 0)) {
+    //存在 按subteamPlacement字段划分
+    const teamCount = new Set(game.participants.map((p) => p.stats.subteamPlacement)).size
+    for (let i = 0; i < teamCount; i++) {
+      const participants = game.participants.filter((p) => p.stats.subteamPlacement === i + 1)
+      const teamData: TeamData = {
+        participants: participants,
+        participantIdentities: game.participantIdentities.filter((p) =>
+          participants.find((a) => a.participantId === p.participantId)
+        )
+      }
+      teamDatas.push(teamData)
+    }
+  } else {
+    // 不存在 按win字段划分
+    const playerCount = game.participants.length
+    teamDatas.push({
+      participants: game.participants.slice(0, playerCount / 2),
+      participantIdentities: game.participantIdentities.slice(0, playerCount / 2)
+    })
+    teamDatas.push({
+      participants: game.participants.slice(playerCount / 2, playerCount),
+      participantIdentities: game.participantIdentities.slice(playerCount / 2, playerCount)
+    })
+  }
+  return teamDatas
 }

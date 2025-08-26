@@ -6,11 +6,18 @@ const configStore = useConfigStore()
 export const request = async <T = any>(
   config: Omit<AxiosRequestConfig, 'auth' | 'baseURL'>
 ): Promise<T> => {
-  const requestConfig = {
+  const requestConfig: AxiosRequestConfig = {
     baseURL: `https://127.0.0.1:${configStore.appPort.value}`,
     auth: {
       username: 'riot',
       password: configStore.remotingAuthToken.value as string
+    },
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      // eslint-disable-next-line prettier/prettier
+      'Pragma': 'no-cache',
+      // eslint-disable-next-line prettier/prettier
+      'Expires': '0'
     }
   }
   return window.api.request({
